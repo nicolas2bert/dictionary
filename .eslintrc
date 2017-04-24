@@ -1,0 +1,6 @@
+{
+  "extends": "scality",
+  "rules": {
+    "no-underscore-dangle": ["error", { "allowAfterThis": true }]
+  },
+}

@@ -1,3 +1,96 @@
-curl -X PUT -d '{"word":"word1", "description":"val2"}' localhost:3000/definition
-curl localhost:3000/definition/val
-curl -X DELETE localhost:3000/definition/val
+Why Node?
+
+* Powerful underlying libraries. libuv, the library behind Node that handles
+  non-blocking I/O, is super awesome and wicked fast.
+
+  Note: "I/O" refers primarily to interaction with the system's disk and network supported by libuv.
+
+  Blocking methods execute synchronously and non-blocking methods execute asynchronously.
+
+  - Synchronous vs Asynchronous
+
+  Synchronous execution usually refers to code executing in sequence.
+  Asynchronous execution refers to execution that doesn't run in the sequence
+  it appears in the code. In the following example, the synchronous operation
+  causes the alerts to fire in sequence.
+  In the async operation, while alert(2) appears to execute second, it doesn't.
+
+  ```js
+  // Synchronous: 1,2,3
+  alert(1);
+  alert(2);
+  alert(3);
+
+  // Asynchronous: 1,3,2
+  alert(1);
+  setTimeout(() => alert(2), 0);
+  alert(3);
+  ```
+
+  - Blocking vs Non-blocking
+
+  Blocking refers to operations that block further execution until that operation finishes.
+  Non-blocking refers to code that doesn't block execution.
+  In the given example, localStorage is a blocking operation as it
+  stalls execution to read. On the other hand,
+  fetch is a non-blocking operation as it does not stall alert(3) from execution.
+
+  ```js
+  // Blocking: 1,... 2
+  alert(1);
+  var value = localStorage.getItem('foo');
+  alert(2);
+
+  // Non-blocking: 1, 3,... 2
+  alert(1);
+  fetch('example.com').then(() => alert(2));
+  alert(3);
+  ```
+
+  - Advantages
+
+  One advantage of non-blocking, asynchronous operations is that you can maximize
+  the usage of a single CPU as well as memory.
+
+  - Synchronous, blocking example
+
+  An example of synchronous, blocking operations is how some web servers like
+  ones in Java or PHP handle IO or network requests. If your code reads from a
+  file or the database, your code "blocks" everything after it from executing.
+  In that period, your machine is holding onto memory and processing time for
+  a thread that isn't doing anything.
+
+  In order to cater other requests while that thread has stalled depends
+  on your software. What most server software do is spawn more threads to cater
+  the additional requests. This requires more memory consumed and more processing.
+
+  - Asynchronous, non-blocking example
+
+  Asynchronous, non-blocking servers like ones ones made in Node, only use one
+  thread to service all requests. This means an instance of Node makes the most
+  out of a single thread. The creators designed it with the premise that the
+  I/O and network operations are the bottleneck.
+
+  When requests arrive at the server, they are serviced one at a time.
+  However, when the code serviced needs to query the DB for example,
+  it sends the callback to a second queue (C++ APIS) and the main thread will continue
+  running (it doesn't wait). Now when the DB operation completes and returns,
+  the corresponding callback pulled out of the second queue (C++ APIS) and queued in a
+  third queue (CALLBACK QUEUE) where they are pending execution. When the engine gets a chance
+  to execute something else (like when the execution stack/ call stack is emptied),
+  it picks up a callback from the third queue and executes it.
+
+  As an example, let's consider a case where each request to a web server takes
+  50ms to complete and 45ms of that 50ms is database I/O that can be done asynchronously.
+  Choosing non-blocking asynchronous operations frees up that 45ms per request
+  to handle other requests. This is a significant difference in capacity
+  just by choosing to use non-blocking methods instead of blocking methods.
+  PHP (no threading): 5 requests will take ~ 5 x 50 = 250ms to complete.
+  NODEJS: 5 requests will take ~ 5 x 5 + 45 = 70ms to complete.
+
+
+
+
+
+* High market demand and very popular in startups at this time.
+* Same language on client and server side.

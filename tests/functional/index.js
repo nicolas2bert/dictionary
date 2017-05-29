@@ -18,6 +18,11 @@ const description = 'description1';
 function createDefinition(done) {
     options.path = '/definition';
     options.method = 'PUT';
+    const authorization = generateAuthHeader(accessKey, secretKey,
+      options.method, options.path);
+    options.headers = {
+        authorization,
+    };
     const data = { word, description };
     const stringifyData = JSON.stringify(data);
     const req = http.request(options);
@@ -29,6 +34,11 @@ function createDefinition(done) {
 function deleteDefinition(done) {
     options.path = `/definition/${word}`;
     options.method = 'DELETE';
+    const authorization = generateAuthHeader(accessKey, secretKey,
+      options.method, options.path);
+    options.headers = {
+        authorization,
+    };
     const req = http.request(options);
     req.on('error', err => done(err));
     req.end(done);
@@ -74,6 +84,11 @@ describe('Testing API', () => {
         it('get existing definition', done => {
             options.path = `/definition/${word}`;
             options.method = 'GET';
+            const authorization = generateAuthHeader(accessKey, secretKey,
+              options.method, options.path);
+            options.headers = {
+                authorization,
+            };
             let rawData = '';
             const req = http.request(options, res => {
                 res.on('data', chunk => {
@@ -96,6 +111,11 @@ describe('Testing API', () => {
         it('delete existing definition', done => {
             options.path = `/definition/${word}`;
             options.method = 'DELETE';
+            const authorization = generateAuthHeader(accessKey, secretKey,
+              options.method, options.path);
+            options.headers = {
+                authorization,
+            };
             const req = http.request(options, res => {
                 assert.strictEqual(res.statusCode, 200);
                 done();
@@ -106,6 +126,11 @@ describe('Testing API', () => {
         it('delete non-existing definition', done => {
             options.path = '/definition/word2';
             options.method = 'DELETE';
+            const authorization = generateAuthHeader(accessKey, secretKey,
+              options.method, options.path);
+            options.headers = {
+                authorization,
+            };
             const req = http.request(options, res => {
                 assert.strictEqual(res.statusCode, 404);
                 done();
